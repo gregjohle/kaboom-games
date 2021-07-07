@@ -1,0 +1,48 @@
+header {
+  background-color: rgb(41, 69, 230);
+  width: 100%;
+  text-align: center;
+  padding: 2% 0;
+}
+
+h1,
+h2,
+h3 {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+  height: 100px;
+  width: 200px;
+  background-color: rgb(56, 119, 236);
+  border: solid 3px rgb(0, 0, 0);
+  border-radius: 5px;
+  font-size: medium;
+}
+
+main {
+  background-color: black;
+  padding: 2% 0;
+}
+
+button:hover {
+  border: solid 5px rgb(0, 0, 0);
+}
+
+button:active {
+  background-color: rgb(255, 255, 255);
+}
+
+a {
+  margin-left: 2%;
+}
+
+footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: rgb(41, 69, 230);
+  width: 100%;
+  padding: 2% 0;
+}
