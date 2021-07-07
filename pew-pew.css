@@ -25,6 +25,14 @@ main {
   padding: 2% 0;
 }
 
+div.pew-pew {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
 button:hover {
   border: solid 5px rgb(0, 0, 0);
 }

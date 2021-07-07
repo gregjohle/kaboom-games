@@ -145,7 +145,7 @@ function link() {
 }
 
 scene("main", () => {
-  layers(["obj", "ui"]);
+  layers(["obj", "ui"], "obj");
   const spawner = add([spawnFood()]);
   let head = add([
     pos(getRandomPosition()),
