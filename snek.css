@@ -21,14 +21,15 @@ button {
 }
 
 main {
-  background-color: black;
+  background-color: rgb(37, 35, 54);
   padding: 2% 0;
 }
 
-div {
-  display: block;
-  height: 640px;
-  width: 640px;
+div.snek {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   margin: 0 auto;
 }
 
