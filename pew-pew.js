@@ -8,14 +8,57 @@ kaboom({
 });
 
 loadSprite("ship", "./sprites/ship.png");
+loadSound("pew", "./sounds/pew-pew.mp3");
+
+function spawnBullet(p) {
+  add([
+    rect(2, 6),
+    pos(p),
+    origin("center"),
+    color(0.5, 0.5, 1),
+    // strings here means a tag
+    "bullet",
+  ]);
+}
 
 scene("main", () => {
   layers(["obj", "ui"], "obj");
 
-  const ship = add([sprite("ship"), pos(width() / 2, 580), scale(0.09)]);
+  const BULLET_SPEED = 320;
+
+  const ship = add([
+    sprite("ship"),
+    pos(width() / 2, 580),
+    scale(0.09),
+    {
+      speed: 250,
+    },
+  ]);
 
   keyDown("left", () => {
-    player.move(-player.speed, 0);
+    ship.move(-ship.speed, 0);
+  });
+
+  keyDown("right", () => {
+    ship.move(ship.speed, 0);
+  });
+
+  keyPress("space", () => {
+    spawnBullet(ship.pos.add(10, 0));
+    spawnBullet(ship.pos.add(30, 0));
+    play("pew", {
+      volume: 0.5,
+      speed: 1,
+      detune: 600,
+    });
+  });
+
+  action("bullet", (b) => {
+    b.move(0, -BULLET_SPEED);
+    // remove the bullet if it's out of the scene for performance
+    if (b.pos.y < 0) {
+      destroy(b);
+    }
   });
 
   add([text("Score: ", 16), layer("ui"), pos(5, 5), "score-label"]);
