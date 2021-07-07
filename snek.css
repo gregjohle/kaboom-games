@@ -25,6 +25,13 @@ main {
   padding: 2% 0;
 }
 
+div {
+  display: block;
+  height: 640px;
+  width: 640px;
+  margin: 0 auto;
+}
+
 button:hover {
   border: solid 5px rgb(0, 0, 0);
 }
