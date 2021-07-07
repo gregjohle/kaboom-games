@@ -12,6 +12,9 @@ var direction = vec2(0, 0);
 let accumTime = 0;
 let difficulty = 0.5;
 
+loadSound("crunch", "./sounds/crunch.mp3");
+loadSound("gameOver", "./sounds/gameOver.mp3");
+
 function controls() {
   return {
     add() {
@@ -158,12 +161,16 @@ scene("main", () => {
 
   head.action(() => {
     if (head.pos.x >= width()) {
+      play("gameOver");
       go("gameOver", score.value);
     } else if (head.pos.x < 0) {
+      play("gameOver");
       go("gameOver", score.value);
     } else if (head.pos.y >= height()) {
+      play("gameOver");
       go("gameOver", score.value);
     } else if (head.pos.y < 0) {
+      play("gameOver");
       go("gameOver", score.value);
     }
   });
@@ -190,6 +197,11 @@ scene("main", () => {
       difficulty = difficulty - 0.01;
     }
 
+    play("crunch", {
+      volume: 2.0,
+      speed: 1.2,
+    });
+
     const newChild = add([
       pos(end.pos.x, end.pos.y),
       rect(20, 20),
@@ -206,6 +218,7 @@ scene("main", () => {
     if (body.isNew()) {
       return;
     }
+    play("gameOver");
     go("gameOver", score.value);
   });
 });
