@@ -37,10 +37,16 @@ scene("main", () => {
 
   keyDown("left", () => {
     ship.move(-ship.speed, 0);
+    if (ship.pos.x < 0) {
+      ship.pos.x = width();
+    }
   });
 
   keyDown("right", () => {
     ship.move(ship.speed, 0);
+    if (ship.pos.x > width()) {
+      ship.pos.x = 0;
+    }
   });
 
   keyPress("space", () => {
@@ -55,7 +61,7 @@ scene("main", () => {
 
   action("bullet", (b) => {
     b.move(0, -BULLET_SPEED);
-    // remove the bullet if it's out of the scene for performance
+
     if (b.pos.y < 0) {
       destroy(b);
     }
