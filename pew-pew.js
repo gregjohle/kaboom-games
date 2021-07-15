@@ -13,6 +13,7 @@ loadSound("pew", "./sounds/pew-pew.mp3");
 loadSound("boss-pew", "./sounds/baddy-pew.mp3");
 loadSound("ship-damage", "./sounds/ship-damage.mp3");
 loadSound("ship-explode", "./sounds/ship-explode.mp3");
+loadSound("boss-explode", "./sounds/boss-explode.mp3");
 
 function spawnBullet(p) {
   add([rect(2, 6), pos(p), origin("center"), color(0.5, 0.5, 1), "bullet"]);
@@ -29,7 +30,7 @@ scene("main", () => {
   const BAD_BULET_SPEED = 250;
   let BOSS_SPEED = -150;
   let CURRENT_SPEED = BOSS_SPEED;
-  let BOSS_HEALTH = 1000;
+  let BOSS_HEALTH = 100;
 
   const ship = add([
     sprite("ship"),
@@ -54,6 +55,17 @@ scene("main", () => {
 
   const boss = add([sprite("boss"), pos(width() / 2, 20), scale(0.25), "boss"]);
 
+  const bossPos = add([
+    rect(5, 200),
+    pos(boss.pos.add(20, 100)),
+    color(0, 0, 0),
+    "bossPos",
+  ]);
+
+  bossPos.action(() => {
+    bossPos.pos.x = boss.pos.x + 70;
+  });
+
   function bossDirection() {
     if (boss.pos.x < 0) {
       CURRENT_SPEED = -BOSS_SPEED;
@@ -63,8 +75,8 @@ scene("main", () => {
     return boss.move(CURRENT_SPEED, 0);
   }
 
-  collides("shipPos", "boss", () => {
-    spawnBadBullet(boss.pos.add(75, 100));
+  collides("shipPos", "bossPos", () => {
+    spawnBadBullet(boss.pos.add(70, 100));
     play("boss-pew", {
       volume: 0.5,
       speed: 0.8,
@@ -142,11 +154,21 @@ scene("main", () => {
   collides("bullet", "boss", (b) => {
     camShake(1);
     destroy(b);
+    play("ship-damage", {
+      volume: 0.5,
+      speed: 3,
+      detune: 100,
+    });
     BOSS_HEALTH = BOSS_HEALTH - 1;
     score.value++;
     score.text = score.value;
+    if (score.value % 10 === 0 && score.value > 0) {
+      BOSS_SPEED = BOSS_SPEED * 1.25;
+    }
     if (BOSS_HEALTH === 0) {
-      go("gameOver", score.value);
+      score.value = score.value + 100 * health.value;
+      play("boss-explode");
+      go("youWin", score.value);
     }
   });
 
@@ -165,6 +187,26 @@ scene("main", () => {
 scene("gameOver", (score) => {
   add([
     text("Game Over", 36),
+    pos(width() / 2, (height() - 20) / 2),
+    origin("center"),
+    color(1, 0, 0, 1),
+  ]);
+
+  add([
+    text(`Score: ${score}`, 24),
+    pos(width() / 2, (height() + 40) / 2),
+    origin("center"),
+    color(1, 1, 1, 1),
+  ]);
+
+  keyPress("space", () => {
+    go("main");
+  });
+});
+
+scene("youWin", (score) => {
+  add([
+    text("You Win!!!", 36),
     pos(width() / 2, (height() - 20) / 2),
     origin("center"),
     color(1, 0, 0, 1),
