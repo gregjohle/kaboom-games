@@ -83,8 +83,9 @@ scene("main", () => {
     });
   });
 
-  collides("bad-bullet", "ship", () => {
+  collides("bad-bullet", "ship", (b) => {
     camShake(5);
+    destroy(b);
     health.value--;
     health.text = health.value;
     play("ship-damage", {
