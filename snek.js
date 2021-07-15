@@ -14,6 +14,7 @@ let difficulty = 0.5;
 
 loadSound("crunch", "./sounds/crunch.mp3");
 loadSound("gameOver", "./sounds/gameOver.mp3");
+loadSound("song", "./sounds/snek-song.mp3");
 
 function controls() {
   return {
@@ -157,6 +158,12 @@ scene("main", () => {
     "head",
   ]);
 
+  const song = play("song", {
+    volume: 0.35,
+  });
+
+  song.loop();
+
   let end = head;
 
   head.action(() => {
@@ -218,6 +225,7 @@ scene("main", () => {
     if (body.isNew()) {
       return;
     }
+    song.stop();
     play("gameOver");
     go("gameOver", score.value);
   });
