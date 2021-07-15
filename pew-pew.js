@@ -212,7 +212,14 @@ scene("gameOver", (score) => {
     color(1, 1, 1, 1),
   ]);
 
-  keyPress("space", () => {
+  add([
+    text(`press enter`, 24),
+    pos(width() / 2, (height() + 100) / 2),
+    origin("center"),
+    color(1, 1, 1, 1),
+  ]);
+
+  keyPress("enter", () => {
     go("main");
   });
 });
@@ -232,7 +239,14 @@ scene("youWin", (score) => {
     color(1, 1, 1, 1),
   ]);
 
-  keyPress("space", () => {
+  add([
+    text(`press enter`, 24),
+    pos(width() / 2, (height() + 100) / 2),
+    origin("center"),
+    color(1, 1, 1, 1),
+  ]);
+
+  keyPress("enter", () => {
     go("main");
   });
 });
