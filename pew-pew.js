@@ -8,23 +8,22 @@ kaboom({
 });
 
 loadSprite("ship", "./sprites/ship.png");
+loadSprite("boss", "./sprites/boss.png");
 loadSound("pew", "./sounds/pew-pew.mp3");
 
 function spawnBullet(p) {
-  add([
-    rect(2, 6),
-    pos(p),
-    origin("center"),
-    color(0.5, 0.5, 1),
-    // strings here means a tag
-    "bullet",
-  ]);
+  add([rect(2, 6), pos(p), origin("center"), color(0.5, 0.5, 1), "bullet"]);
+}
+
+function spawnBadBullet(p) {
+  add([rect(2, 6), pos(p), origin("center"), color(1, 0, 0), "bad-bullet"]);
 }
 
 scene("main", () => {
   layers(["obj", "ui"], "obj");
 
   const BULLET_SPEED = 320;
+  const BAD_BULET_SPEED = 50;
 
   const ship = add([
     sprite("ship"),
@@ -34,6 +33,31 @@ scene("main", () => {
       speed: 250,
     },
   ]);
+
+  const boss = add([
+    sprite("boss"),
+    pos(width() / 2, 20),
+    scale(0.25),
+
+    {
+      speed: 200,
+    },
+  ]);
+
+  function bossDirection() {
+    let dir = -1;
+
+    if (boss.pos.x < 0) {
+      dir = dir * -1;
+    } else if (boss.pos.x > width()) {
+      dir = dir * -1;
+    }
+    return boss.move(boss.speed * dir, 0);
+  }
+
+  boss.action(() => {
+    bossDirection();
+  });
 
   keyDown("left", () => {
     ship.move(-ship.speed, 0);
@@ -63,6 +87,14 @@ scene("main", () => {
     b.move(0, -BULLET_SPEED);
 
     if (b.pos.y < 0) {
+      destroy(b);
+    }
+  });
+
+  action("bad-bullet", (b) => {
+    b.move(0, BAD_BULET_SPEED);
+
+    if (b.pos.y > height()) {
       destroy(b);
     }
   });
