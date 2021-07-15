@@ -14,6 +14,7 @@ loadSound("boss-pew", "./sounds/baddy-pew.mp3");
 loadSound("ship-damage", "./sounds/ship-damage.mp3");
 loadSound("ship-explode", "./sounds/ship-explode.mp3");
 loadSound("boss-explode", "./sounds/boss-explode.mp3");
+loadSound("song", "./sounds/pew-song.mp3");
 
 function spawnBullet(p) {
   add([rect(2, 6), pos(p), origin("center"), color(0.5, 0.5, 1), "bullet"]);
@@ -31,6 +32,11 @@ scene("main", () => {
   let BOSS_SPEED = -150;
   let CURRENT_SPEED = BOSS_SPEED;
   let BOSS_HEALTH = 100;
+
+  const song = play("song", {
+    volume: 0.35,
+  });
+  song.loop();
 
   const ship = add([
     sprite("ship"),
@@ -94,7 +100,10 @@ scene("main", () => {
       volume: 0.5,
     });
     if (health.value === 0) {
-      play("ship-explode");
+      song.stop();
+      play("ship-explode", {
+        speed: 0.8,
+      });
       go("gameOver", score.value);
     }
   });
@@ -169,6 +178,7 @@ scene("main", () => {
       BOSS_SPEED = BOSS_SPEED * 1.25;
     }
     if (BOSS_HEALTH === 0) {
+      song.stop();
       score.value = score.value + 100 * health.value;
       play("boss-explode");
       go("youWin", score.value);
