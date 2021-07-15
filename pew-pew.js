@@ -10,20 +10,26 @@ kaboom({
 loadSprite("ship", "./sprites/ship.png");
 loadSprite("boss", "./sprites/boss.png");
 loadSound("pew", "./sounds/pew-pew.mp3");
+loadSound("boss-pew", "./sounds/baddy-pew.mp3");
+loadSound("ship-damage", "./sounds/ship-damage.mp3");
+loadSound("ship-explode", "./sounds/ship-explode.mp3");
 
 function spawnBullet(p) {
   add([rect(2, 6), pos(p), origin("center"), color(0.5, 0.5, 1), "bullet"]);
 }
 
 function spawnBadBullet(p) {
-  add([rect(2, 6), pos(p), origin("center"), color(1, 0, 0), "bad-bullet"]);
+  add([rect(4, 12), pos(p), origin("center"), color(1, 0, 0), "bad-bullet"]);
 }
 
 scene("main", () => {
   layers(["obj", "ui"], "obj");
 
   const BULLET_SPEED = 320;
-  const BAD_BULET_SPEED = 50;
+  const BAD_BULET_SPEED = 250;
+  let BOSS_SPEED = -150;
+  let CURRENT_SPEED = BOSS_SPEED;
+  let BOSS_HEALTH = 1000;
 
   const ship = add([
     sprite("ship"),
@@ -32,28 +38,51 @@ scene("main", () => {
     {
       speed: 250,
     },
+    "ship",
   ]);
 
-  const boss = add([
-    sprite("boss"),
-    pos(width() / 2, 20),
-    scale(0.25),
-
-    {
-      speed: 200,
-    },
+  const shipPos = add([
+    rect(5, 200),
+    pos(ship.pos.add(20, -500)),
+    color(0, 0, 0),
+    "shipPos",
   ]);
+
+  shipPos.action(() => {
+    shipPos.pos.x = ship.pos.x;
+  });
+
+  const boss = add([sprite("boss"), pos(width() / 2, 20), scale(0.25), "boss"]);
 
   function bossDirection() {
-    let dir = -1;
-
     if (boss.pos.x < 0) {
-      dir = dir * -1;
-    } else if (boss.pos.x > width()) {
-      dir = dir * -1;
+      CURRENT_SPEED = -BOSS_SPEED;
+    } else if (boss.pos.x > width() - 150) {
+      CURRENT_SPEED = BOSS_SPEED;
     }
-    return boss.move(boss.speed * dir, 0);
+    return boss.move(CURRENT_SPEED, 0);
   }
+
+  collides("shipPos", "boss", () => {
+    spawnBadBullet(boss.pos.add(75, 100));
+    play("boss-pew", {
+      volume: 0.5,
+      speed: 0.8,
+    });
+  });
+
+  collides("bad-bullet", "ship", () => {
+    camShake(5);
+    health.value--;
+    health.text = health.value;
+    play("ship-damage", {
+      volume: 0.5,
+    });
+    if (health.value === 0) {
+      play("ship-explode");
+      go("gameOver", score.value);
+    }
+  });
 
   boss.action(() => {
     bossDirection();
@@ -91,11 +120,11 @@ scene("main", () => {
     }
   });
 
-  action("bad-bullet", (b) => {
-    b.move(0, BAD_BULET_SPEED);
+  action("bad-bullet", (bb) => {
+    bb.move(0, BAD_BULET_SPEED);
 
-    if (b.pos.y > height()) {
-      destroy(b);
+    if (bb.pos.y > height()) {
+      destroy(bb);
     }
   });
 
@@ -109,6 +138,17 @@ scene("main", () => {
       value: 0,
     },
   ]);
+
+  collides("bullet", "boss", (b) => {
+    camShake(1);
+    destroy(b);
+    BOSS_HEALTH = BOSS_HEALTH - 1;
+    score.value++;
+    score.text = score.value;
+    if (BOSS_HEALTH === 0) {
+      go("gameOver", score.value);
+    }
+  });
 
   add([text("Health: ", 16), layer("ui"), pos(500, 5), "score-label"]);
 
