@@ -43,27 +43,27 @@ scene("main", () => {
   ]);
 
   const shipPos = add([
-    rect(5, 200),
+    rect(40, 200),
     pos(ship.pos.add(20, -500)),
     color(0, 0, 0),
     "shipPos",
   ]);
 
   shipPos.action(() => {
-    shipPos.pos.x = ship.pos.x;
+    shipPos.pos.x = ship.pos.x + 3;
   });
 
   const boss = add([sprite("boss"), pos(width() / 2, 20), scale(0.25), "boss"]);
 
   const bossPos = add([
-    rect(5, 200),
-    pos(boss.pos.add(20, 100)),
+    rect(120, 200),
+    pos(boss.pos.add(0, 100)),
     color(0, 0, 0),
     "bossPos",
   ]);
 
   bossPos.action(() => {
-    bossPos.pos.x = boss.pos.x + 70;
+    bossPos.pos.x = boss.pos.x + 15;
   });
 
   function bossDirection() {
@@ -77,6 +77,8 @@ scene("main", () => {
 
   collides("shipPos", "bossPos", () => {
     spawnBadBullet(boss.pos.add(70, 100));
+    spawnBadBullet(boss.pos.add(35, 100));
+    spawnBadBullet(boss.pos.add(105, 100));
     play("boss-pew", {
       volume: 0.5,
       speed: 0.8,
